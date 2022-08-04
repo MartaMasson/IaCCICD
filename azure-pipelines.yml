@@ -1,0 +1,58 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+- job: Validate
+  displayName: Terraform Validate
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - checkout: self
+  - task: TerraformInstaller@0
+    displayName: Install Terraform latest
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Init'
+    inputs:
+      backendServiceArm: 'sc-dowdtf'
+      backendAzureRmResourceGroupName: dowd-devops-rg
+      backendAzureRmStorageAccountName: dowdtf
+      backendAzureRmContainerName: tfstatedowd
+      backendAzureRmKey: terraform.tfstate
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Validate'
+    inputs:
+      command: validate
+- job: Deploy
+  displayName: Terraform Deploy
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - checkout: self
+  - task: TerraformInstaller@0
+    displayName: Install Terraform latest
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Init'
+    inputs:
+      backendServiceArm: 'sc-dowdtf'
+      backendAzureRmResourceGroupName: rg-dowd-devops
+      backendAzureRmStorageAccountName: dowdtf
+      backendAzureRmContainerName: tfstatedowd
+      backendAzureRmKey: terraform.tfstate
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Plan'
+    inputs:
+      command: plan
+      environmentServiceNameAzureRM: 'sc-dowdtf'
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform : Validate and Apply'
+    inputs:
+      command: apply
+      environmentServiceNameAzureRM: 'sc-dowdtf'
