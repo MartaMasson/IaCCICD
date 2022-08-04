@@ -57,6 +57,6 @@ resource "azurerm_bastion_host" "hubab" {
     ip_configuration {
       name                 = "hubabconfig"
       subnet_id            = azurerm_subnet.hub-subnetab.id
-      public_ip_address_id = azurerm_public_ip.pipab
+      public_ip_address_id = azurerm_public_ip.pipab.ip_address
     }
 }
