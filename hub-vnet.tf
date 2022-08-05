@@ -16,7 +16,7 @@ resource "azurerm_virtual_network" "hub-vnet" {
     name                = "${local.prefix-hub}-vnet"
     location            = azurerm_resource_group.hub-vnet-rg.location
     resource_group_name = azurerm_resource_group.hub-vnet-rg.name
-    address_space       = ["10.0.1.0/16"]
+    address_space       = ["10.0.0.0/16"]
 
     tags = {
     environment = "hub-spoke"
@@ -28,7 +28,7 @@ resource "azurerm_subnet" "hub-subnetfw" {
     name                 = "${local.prefix-hub}-subnetfw"
     resource_group_name  = azurerm_resource_group.hub-vnet-rg.name
     virtual_network_name = azurerm_virtual_network.hub-vnet.name
-    address_prefixes       = ["10.0.0.64/27"]
+    address_prefixes       = ["10.0.1.0/27"]
 }
 
 # Creating the hub subnet to azure bastion (ab)
@@ -36,7 +36,7 @@ resource "azurerm_subnet" "hub-subnetab" {
     name                 = "${local.prefix-hub}-subnetab"
     resource_group_name  = azurerm_resource_group.hub-vnet-rg.name
     virtual_network_name = azurerm_virtual_network.hub-vnet.name
-    address_prefixes       = ["10.0.0.64/27"]
+    address_prefixes       = ["10.0.2.0/27"]
 }
 
 # Creating public ip for azure bastion
